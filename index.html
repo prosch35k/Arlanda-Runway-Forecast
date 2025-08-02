@@ -285,8 +285,13 @@
             const utcTime = `${utcHour}00Z`;
             const roundedDir = Math.round(wd / 10) * 10;
             const windString = `${roundedDir.toString().padStart(3, '0')}${Math.round(ws).toString().padStart(2, '0')}KT`;
-            const cleanedConfig = rwyConfig.replace(/ \/ /g, '/');
+            const cleanedConfig = rwyConfig
+               .replace(/ \/ /g, '/')
+               .split(' or ')
+               .filter((v, i, a) => a.indexOf(v) === i)
+               .join(' or ');
             html += `<li>${utcTime} ${windString} — <strong>${cleanedConfig}</strong></li>`;
+
           }
 
           windList.innerHTML = html;
@@ -314,6 +319,7 @@
   </script>
 </body>
 </html>
+
 
 
 
