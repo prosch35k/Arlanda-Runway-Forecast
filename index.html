@@ -151,6 +151,7 @@
 
   <div id="topRightButtons">
     <button id="aboutBtn">ABOUT</button>
+    <button id="awosBtn">AWOS</button>
     <button id="notamsBtn">NOTAMs</button>
   </div>
 
@@ -216,6 +217,10 @@
 
     document.getElementById('notamsBtn').addEventListener('click', () => {
       window.open('https://aro.lfv.se/Links/Link/ShowFileList?type=AIS&path=%5Cpibsweden%5C&torlinkName=NOTAM%20Sweden', '_blank');
+    });
+
+    document.getElementById('awosBtn').addEventListener('click', () => {
+      window.open('https://wx.awos.se/?siteId=essa', '_blank');
     });
 
     document.getElementById('rwy01L19R').addEventListener('change', loadWind);
@@ -358,7 +363,4 @@
   </script>
 </body>
 </html>
-
-
-
 
