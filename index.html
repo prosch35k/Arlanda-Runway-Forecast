@@ -250,16 +250,16 @@
         return "NO AVAILABLE RWYS"
       }
       if(closedRunways.rwy01R19L && closedRunways.rwy01L19R && !closedRunways.rwy0826) {
-        if (inRange(windDir, 340, 361) || inRange(windDir, 0, 161)) return "ARR 08 / DEP 08";
-        if (inRange(windDir, 160, 341)) return "ARR 26 / DEP 26";
+        if (inRange(windDir, 340, 361) || inRange(windDir, 0, 161)) return "SINGLE RWY 08";
+        if (inRange(windDir, 160, 341)) return "SINGLE RWY 26";
       }
       if (closedRunways.rwy0826 && closedRunways.rwy01R19L && !closedRunways.rwy01L19R) {
-        if (inRange(windDir, 274, 361) || inRange(windDir, 0, 095)) return "ARR 01L / DEP 01L";
-        if (inRange(windDir, 094, 275)) return "ARR 19R / DEP 19R";
+        if (inRange(windDir, 274, 361) || inRange(windDir, 0, 095)) return "SINGLE RWY 01L";
+        if (inRange(windDir, 094, 275)) return "SINGLE RWY 19R";
       }
       if (closedRunways.rwy0826 && closedRunways.rwy01L19R && !closedRunways.rwy01R19L) {
-        if (inRange(windDir, 274, 361) || inRange(windDir, 0, 095)) return "ARR 01R / DEP 01R";
-        if (inRange(windDir, 094, 275)) return "ARR 19L / DEP 19L";
+        if (inRange(windDir, 274, 361) || inRange(windDir, 0, 095)) return "SINGLE RWY 01R";
+        if (inRange(windDir, 094, 275)) return "SINGLE RWY 19L";
       }
       if (!closedRunways.rwy01L19R && !closedRunways.rwy01R19L && !closedRunways.rwy0826) {
         if (!windAbove5) return "RWY unpredictable";
@@ -384,3 +384,4 @@
   </script>
 </body>
 </html>
+
