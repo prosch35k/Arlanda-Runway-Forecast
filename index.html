@@ -381,9 +381,9 @@
     // Set checkbox for 01R/19L based on current date (check until 15 August)
     (function () {
       const today = new Date();
-      const august15 = new Date(today.getFullYear(), 7, 15); // Month is 0-indexed: 7 = August
+      const august17 = new Date(today.getFullYear(), 7, 17); // Month is 0-indexed: 7 = August
       const checkbox = document.getElementById('rwy01R19L');
-      checkbox.checked = today < august15;
+      checkbox.checked = today < august17;
     })();
 
     loadWind();
@@ -391,3 +391,4 @@
   </script>
 </body>
 </html>
+
