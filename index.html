@@ -242,6 +242,9 @@
     function decideRunwayConfig(windDir, windSpd, ltHour, closedRunways) {
       const day = isDay(ltHour);
       const windAbove5 = windSpd > 5;
+      if (closedRunways.rwy01L19R && closedRunways.rwy01R19L && closedRunways.rwy0826) {
+        return "NO AVAILABLE RWYS"
+      }
       if(closedRunways.rwy01R19L && closedRunways.rwy01L19R && !closedRunways.rwy0826) {
         if (inRange(windDir, 340, 361) || inRange(windDir, 0, 161)) return "ARR 08 / DEP 08";
         if (inRange(windDir, 160, 341)) return "ARR 26 / DEP 26";
@@ -377,5 +380,6 @@
   </script>
 </body>
 </html>
+
 
 
