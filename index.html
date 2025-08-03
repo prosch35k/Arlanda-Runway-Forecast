@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Arlanda Hourly Wind with Runway Config</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet" />
+  <title>Arlanda Runway Config Forecast</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet" />
+  <link href="="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet" />
   <style>
     body {
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Source Sans Pro', sans-serif;
       background: #f9f9f9;
       padding: 20px;
       color: #333;
@@ -48,7 +49,7 @@
       color: white;
       padding: 10px 16px;
       border-radius: 8px;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Source Sans Pro', sans-serif;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       user-select: none;
       z-index: 1000;
@@ -68,7 +69,7 @@
     #runwayForm {
       text-align: center;
       margin-bottom: 1.5rem;
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Source Sans Pro', sans-serif;
       font-weight: 700;
       font-size: 1.1rem;
     }
@@ -98,9 +99,8 @@
       z-index: 1100;
       user-select: none;
     }
-
     #topRightButtons button {
-      font-family: 'Roboto Mono', monospace;
+      font-family: 'Source Sans Pro', sans-serif;
       font-weight: 700;
       background: #1abc9c;
       border: none;
@@ -110,9 +110,35 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-
     #topRightButtons button:hover {
       background: #16a085;
+    }
+
+    /* Modal styles and animation */
+    #aboutModal {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 90%;
+      z-index: 2000;
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    #aboutModal.show {
+      display: block;
+      opacity: 1;
+    }
+
+    #aboutModal.hide {
+      opacity: 0;
     }
   </style>
 </head>
@@ -127,7 +153,7 @@
     <button id="notamsBtn">NOTAMs</button>
   </div>
 
-  <h1>Wind and Runway Forecast – Arlanda</h1>
+  <h1>Runway Config Forecast - Arlanda</h1>
 
   <form id="runwayForm">
     <div>Runways closed (select only one)</div>
@@ -138,14 +164,22 @@
 
   <ul id="windList">Loading…</ul>
 
+  <!-- Modal -->
+  <div id="aboutModal">
+    <h2 style="margin-top:0; color:#1abc9c;">About</h2>
+    <p>This website was developed to be able to forecast the runways in use at Arlanda.<br>
+    Note that actual runway in use may differ due to other factors.</p>
+    Bug reports welcome on <a href="https://github.com/prosch35k/RWY-predictor-ESSA/issues" target="_blank">Github</a>.<br /><br />
+    <p style="margin-bottom:0;">Copyright © 2025 Rui Feng</p>
+    <button id="closeAbout" style="margin-top:15px; background:#1abc9c; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;">Close</button>
+  </div>
+
   <script>
     function updateClocks() {
       const now = new Date();
-
       const utcHour = now.getUTCHours().toString().padStart(2, '0');
       const utcMin = now.getUTCMinutes().toString().padStart(2, '0');
       const utcTime = `${utcHour}${utcMin}Z`;
-
       const localFormatter = new Intl.DateTimeFormat('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
@@ -154,13 +188,37 @@
       });
       const localTimeStr = localFormatter.format(now);
       const localTime = `${localTimeStr.replace(':', '')}LT`;
-
       const clock = document.getElementById('clockContainer');
       clock.innerHTML = `<div class="utc-time">${utcTime}</div><div class="local-time">${localTime}</div>`;
     }
 
     updateClocks();
     setInterval(updateClocks, 1000);
+
+    // Add fade-in/out modal logic
+    document.getElementById('aboutBtn').addEventListener('click', () => {
+      const modal = document.getElementById('aboutModal');
+      modal.classList.remove('hide');
+      modal.style.display = 'block';
+      requestAnimationFrame(() => modal.classList.add('show'));
+    });
+
+    document.getElementById('closeAbout').addEventListener('click', () => {
+      const modal = document.getElementById('aboutModal');
+      modal.classList.remove('show');
+      modal.classList.add('hide');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300); // Matches transition duration
+    });
+
+    document.getElementById('notamsBtn').addEventListener('click', () => {
+      window.location.href = 'https://aro.lfv.se/Links/Link/ShowFileList?type=AIS&path=%5Cpibsweden%5C&torlinkName=NOTAM%20Sweden';
+    });
+
+    document.getElementById('rwy01L19R').addEventListener('change', loadWind);
+    document.getElementById('rwy01R19L').addEventListener('change', loadWind);
+    document.getElementById('rwy0826').addEventListener('change', loadWind);
 
     function isDay(hour) {
       return hour >= 6 && hour < 22;
@@ -176,16 +234,14 @@
 
     function decideRunwayConfig(windDir, windSpd, ltHour, closedRunways) {
       const day = isDay(ltHour);
-      const night = !day;
       const windAbove5 = windSpd > 5;
-
       if (!closedRunways.rwy01L19R && !closedRunways.rwy01R19L && !closedRunways.rwy0826) {
         if (!windAbove5) return "RWY unpredictable";
         if (day) {
           if (inRange(windDir, 170, 281)) return "ARR 19L / DEP 19R or ARR 26 / DEP 19R";
           if (inRange(windDir, 280, 351)) return "ARR 01R / DEP 01L or ARR 26 / DEP 01L or ARR 01R / DEP 01L";
           if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01R / DEP 01L or ARR 01L / DEP 08";
-          if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R or ARR 19R / DEP 08";
+          if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R  or  ARR 19R / DEP 08";
         } else {
           if (inRange(windDir, 170, 281)) return "ARR 26 / DEP 19L";
           if (inRange(windDir, 280, 351)) return "ARR 26 / DEP 01L or ARR 01L / DEP 01L";
@@ -193,7 +249,6 @@
           if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R or ARR 19R / DEP 08";
         }
       }
-
       if (closedRunways.rwy01L19R) {
         if (day) {
           if (inRange(windDir, 170, 281)) return "ARR 26 / DEP 19L";
@@ -207,7 +262,6 @@
           if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01R / DEP 08 or ARR 01R / DEP 01R";
         }
       }
-
       if (closedRunways.rwy0826) {
         if (day) {
           if (inRange(windDir, 170, 281)) return "ARR 19L / DEP 19R";
@@ -223,22 +277,18 @@
           }
         }
       }
-
       if (closedRunways.rwy01R19L) {
-         if (inRange(windDir, 170, 281)) return "ARR 26 / DEP 19R";
-         if (inRange(windDir, 280, 351)) return "ARR 26 / DEP 01L or ARR 01L / DEP 01L";
-          if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01L / DEP 08";
-         if (inRange(windDir, 100, 171)) return "ARR 19R / DEP 08";
+        if (inRange(windDir, 170, 281)) return "ARR 26 / DEP 19R";
+        if (inRange(windDir, 280, 351)) return "ARR 26 / DEP 01L or ARR 01L / DEP 01L";
+        if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01L / DEP 08";
+        if (inRange(windDir, 100, 171)) return "ARR 19R / DEP 08";
       }
-
-
       return "RWY unpredictable";
     }
 
     function loadWind() {
       const windList = document.getElementById('windList');
       windList.innerHTML = 'Loading…';
-
       const closedRunways = {
         rwy01L19R: document.getElementById('rwy01L19R').checked,
         rwy01R19L: document.getElementById('rwy01R19L').checked,
@@ -291,7 +341,6 @@
                .filter((v, i, a) => a.indexOf(v) === i)
                .join(' or ');
             html += `<li>${utcTime} ${windString} — <strong>${cleanedConfig}</strong></li>`;
-
           }
 
           windList.innerHTML = html;
@@ -304,25 +353,6 @@
 
     loadWind();
     setInterval(loadWind, 5 * 60 * 1000);
-
-    document.getElementById('rwy01L19R').addEventListener('change', loadWind);
-    document.getElementById('rwy01R19L').addEventListener('change', loadWind);
-    document.getElementById('rwy0826').addEventListener('change', loadWind);
-
-    document.getElementById('notamsBtn').addEventListener('click', () => {
-      window.location.href = 'https://aro.lfv.se/Links/Link/ShowFileList?type=AIS&path=%5Cpibsweden%5C&torlinkName=NOTAM%20Sweden';
-    });
-
-    document.getElementById('aboutBtn').addEventListener('click', () => {
-      alert('This website was developed to be able to forecast the runways in use at Arlanda.\nNote that actual runway in use may differ due to other factors.\n\nWelcome to file bug reports on the Github:\nhttps://github.com/prosch35k/RWY-predictor-ESSA/issues\n\nCopyright © 2025 Rui Feng');
-    });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
