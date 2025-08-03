@@ -164,7 +164,7 @@
   <form id="runwayForm">
     <div>Runways closed</div>
     <label><input type="checkbox" id="rwy01L19R" /><span class="rwy-name">01L/19R</span></label>
-    <label><input type="checkbox" id="rwy01R19L" checked /><span class="rwy-name">01R/19L</span></label>
+    <label><input type="checkbox" id="rwy01R19L" /><span class="rwy-name">01R/19L</span></label>
     <label><input type="checkbox" id="rwy0826" /><span class="rwy-name">08/26</span></label>
   </form>
 
@@ -378,10 +378,16 @@
           console.error(err);
         });
     }
+    // Set checkbox for 01R/19L based on current date (check until 15 August)
+    (function () {
+      const today = new Date();
+      const august15 = new Date(today.getFullYear(), 7, 15); // Month is 0-indexed: 7 = August
+      const checkbox = document.getElementById('rwy01R19L');
+      checkbox.checked = today < august15;
+    })();
 
     loadWind();
     setInterval(loadWind, 5 * 60 * 1000);
   </script>
 </body>
 </html>
-
