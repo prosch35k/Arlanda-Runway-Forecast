@@ -339,7 +339,7 @@
                .replace(/ \/ /g, '/')
                .split(' or ')
                .filter((v, i, a) => a.indexOf(v) === i)
-               .join(' or ');
+               .join(' &nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp; ')
             html += `<li>${utcTime} ${windString} — <strong>${cleanedConfig}</strong></li>`;
           }
 
@@ -356,3 +356,4 @@
   </script>
 </body>
 </html>
+
