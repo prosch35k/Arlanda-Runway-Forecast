@@ -382,9 +382,15 @@
       const today = new Date();
       
       // 01R/19L until Aug 17
-      const august18 = new Date(today.getFullYear(), 7, 18); // Month is 0-indexed: 7 = August
+      const august18 = new Date(today.getFullYear(), 7, 18);
       const checkbox01R19L = document.getElementById('rwy01R19L');
       checkbox01R19L.checked = today < august18;
+
+      // 08/26 1st Sept until 12 Sept
+      const august31 = new Date(today.getFullYear(), 7, 31);
+      const september13 = new Date(today.getFullYear(), 8, 13);
+      const checkbox0826 = document.getElementById('rwy0826');
+      checkbox0826.checked = today < september13 && today > august31;
     })();
 
     loadWind();
@@ -392,6 +398,7 @@
   </script>
 </body>
 </html>
+
 
 
 
