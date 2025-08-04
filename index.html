@@ -322,7 +322,7 @@
         rwy0826: document.getElementById('rwy0826').checked,
       };
 
-      fetch('https://api.open-meteo.com/v1/forecast?latitude=59.649&longitude=17.923&hourly=windspeed_10m,winddirection_10m&timezone=Europe/Stockholm')
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=59.649&longitude=17.923&hourly=windspeed_10m,winddirection_10m&wind_speed_unit=kn&timezone=Europe/Stockholm')
         .then(response => response.json())
         .then(data => {
           const windSpeedArr = data.hourly.windspeed_10m;
@@ -398,6 +398,7 @@
   </script>
 </body>
 </html>
+
 
 
 
