@@ -159,6 +159,7 @@
   </div>
 
   <h1>Runway Config Forecast - Arlanda</h1>
+  <p>For forecasts after 15 August, please uncheck all boxes below.</p>
 
   <form id="runwayForm">
     <div>Runways closed</div>
@@ -381,10 +382,10 @@
     (function () {
       const today = new Date();
       
-      // 01R/19L until Aug 17
-      const august18 = new Date(today.getFullYear(), 7, 18);
+      // 01R/19L until Aug 15
+      const august16 = new Date(today.getFullYear(), 7, 16);
       const checkbox01R19L = document.getElementById('rwy01R19L');
-      checkbox01R19L.checked = today < august18;
+      checkbox01R19L.checked = today < august16;
 
       // 08/26 1st Sept until 12 Sept
       const august31 = new Date(today.getFullYear(), 7, 31);
@@ -398,6 +399,7 @@
   </script>
 </body>
 </html>
+
 
 
 
