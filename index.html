@@ -207,6 +207,7 @@
     <label><input type="checkbox" id="rwy0826" /><span class="rwy-name">08/26</span></label>
   </form>
 
+  <p>*runway prediction uncertain due to low windspeeds.</p>
   <ul id="windList">Loading…</ul>
 
   <!-- Modal -->
@@ -217,7 +218,7 @@
     Bug reports welcome on <a href="https://github.com/prosch35k/RWY-predictor-ESSA/issues" target="_blank">Github</a>.<br /><br />
     Want to help me keep this site running? Support me <a href="https://buymeacoffee.com/rui35k" target="_blank">here!</a><br /><br />
     <p style="margin-bottom:0;">Copyright © 2025 Rui Feng</p>
-    <p style="color: #b0b0b0;">v1.1.1</p>
+    <p style="color: #b0b0b0;">v1.1.2</p>
     <button id="closeAbout" style="margin-top:15px; background:#1abc9c; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;">Close</button>
   </div>
 
@@ -225,10 +226,10 @@
     <h2 style="margin-top:0; color:#1abc9c;">Information</h2>
     <p><strong>About runway configurations:</strong><br><br>
     Runway configurations&nbsp;&nbsp;<strong>ARR 19L/DEP 19L</strong>&nbsp;&nbsp;and&nbsp;&nbsp;<strong>ARR 01R/DEP 01L</strong>&nbsp;&nbsp;are peak configurations, <br>
-    and are only used under high traffic load.
+    and are only used under high traffic load (&gt;56 movements per hour).
     <br>
     <br>
-    With winds below 5 KT, runway configuration cannot be predicted, as aircraft may still <br>depart with a tailwind of less than 5 KT. 
+    With winds below 5 KT, runway configuration predictions are uncertain, as aircraft may still <br>depart with a tailwind of less than 5 KT. 
     <br>
     <br>
     </p>
@@ -353,10 +354,22 @@
         if (inRange(windDir, 094, 275)) return "SINGLE RWY 19L";
       }
       if (!closedRunways.rwy01L19R && !closedRunways.rwy01R19L && !closedRunways.rwy0826) {
-        if (!windAbove5) return "RWY unpredictable";
+        if (!windAbove5 && day) {
+          if (inRange(windDir, 170, 281)) return "ARR 19L / DEP 19R or ARR 26 / DEP 19R*";
+          if (inRange(windDir, 280, 351)) return "ARR 01R / DEP 01L or ARR 26 / DEP 01L*";
+          if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01R / DEP 01L or ARR 01L / DEP 08*";
+          if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R  or  ARR 19R / DEP 08*";
+        } 
+        if (!windAbove5 && !day) {
+          if (inRange(windDir, 170, 281)) return "ARR 26 / DEP 19L*";
+          if (inRange(windDir, 280, 351)) return "ARR 26 / DEP 01L or ARR 01L / DEP 01L*";
+          if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01R / DEP 01L or ARR 01L / DEP 08*";
+          if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R or ARR 19R / DEP 08*";
+        }
+
         if (day) {
           if (inRange(windDir, 170, 281)) return "ARR 19L / DEP 19R or ARR 26 / DEP 19R";
-          if (inRange(windDir, 280, 351)) return "ARR 01R / DEP 01L or ARR 26 / DEP 01L or ARR 01R / DEP 01L";
+          if (inRange(windDir, 280, 351)) return "ARR 01R / DEP 01L or ARR 26 / DEP 01L";
           if (inRange(windDir, 350, 361) || inRange(windDir, 0, 101)) return "ARR 01R / DEP 01L or ARR 01L / DEP 08";
           if (inRange(windDir, 100, 171)) return "ARR 19L / DEP 19R  or  ARR 19R / DEP 08";
         } else {
