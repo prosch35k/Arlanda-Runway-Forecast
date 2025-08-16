@@ -30,7 +30,7 @@
       padding: 0;
       margin: 0;
     }
-    li {
+    #windList li {
       font-size: 1.3rem;
       padding: 4px 0;
       text-align: center;
@@ -144,6 +144,45 @@
     #aboutModal.hide {
       opacity: 0;
     }
+
+    #infoModal {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 90%;
+      z-index: 2000;
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    #infoModal.show {
+      display: block;
+      opacity: 1;
+    }
+
+    #infoModal.hide {
+      display: block;
+      opacity: 0;
+    }
+
+    #ol {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #configList li {
+      font-size: 1.1rem;
+      padding: 4px 0;
+      text-align: left
+    }
+
   </style>
 </head>
 <body>
@@ -153,13 +192,13 @@
   </div>
 
   <div id="topRightButtons">
+    <button id="infoBtn">INFO</button>
     <button id="aboutBtn">ABOUT</button>
     <button id="awosBtn">AWOS</button>
     <button id="notamsBtn">NOTAMs</button>
   </div>
 
   <h1>Runway Config Forecast - Arlanda</h1>
-
   <form id="runwayForm">
     <div>Runways closed</div>
     <label><input type="checkbox" id="rwy01L19R" /><span class="rwy-name">01L/19R</span></label>
@@ -177,7 +216,43 @@
     Bug reports welcome on <a href="https://github.com/prosch35k/RWY-predictor-ESSA/issues" target="_blank">Github</a>.<br /><br />
     Want to help me keep this site running? Support me <a href="https://buymeacoffee.com/rui35k" target="_blank">here!</a><br /><br />
     <p style="margin-bottom:0;">Copyright © 2025 Rui Feng</p>
+    <p style="color: #b0b0b0;">v1.1.0</p>
     <button id="closeAbout" style="margin-top:15px; background:#1abc9c; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;">Close</button>
+  </div>
+
+  <div id="infoModal">
+    <h2 style="margin-top:0; color:#1abc9c;">Information</h2>
+    <p><strong>About runway configurations:</strong><br><br>
+    Runway configurations&nbsp;&nbsp;<strong>ARR 19L/DEP 19L</strong>&nbsp;&nbsp;and&nbsp;&nbsp;<strong>ARR 01R/DEP 01L</strong>&nbsp;&nbsp;are peak configurations, <br>
+    and are only used under high traffic load.
+    <br>
+    <br>
+    With winds below 5 KT, runway configuration cannot be predicted, as aircraft may still <br>depart with a tailwind of less than 5 KT. 
+    <br>
+    <br>
+    </p>
+    <p id="configListH"><strong>Runway configuration list:</strong></p>
+    
+     
+    <ol id="configList">
+      <li>ARR 01R/DEP 01L</li>
+      <li>ARR 19L/DEP 19R</li>   
+      <li>ARR 01L/DEP 08</li>          
+      <li>ARR 19R/DEP 08</li>   
+      <li>ARR 26/DEP 01L</li>
+      <li>ARR 26/DEP 19R</li>
+      <li>ARR 19R/DEP 19L <em>(only used during nighttime)</em></li>
+      <li>ARR 01R/DEP 08 <em>(only used when RWY 01L closed)</em></li>
+      <li>ARR 08/DEP 19L <em>(only used when RWY 19R closed)</em></li>
+      <li>ARR 26/DEP 19L <em>(only used when RWY 19R closed)</em></li>
+      <li>SINGLE RWY 01L <em>(only used when required)</em></li>
+      <li>SINGLE RWY 01R <em>(only used when required)</em></li>
+      <li>SINGLE RWY 19L <em>(only used when required)</em></li>
+      <li>SINGLE RWY 19R <em>(only used when required)</em></li>
+      <li>SINGLE RWY 08 <em>(only used when required)</em></li>
+      <li>SINGLE RWY 26 <em>(only used when required)</em></li>
+    </ol>
+    <button id="closeInfo" style="margin-top: 15px; background:#1abc9c; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer;">Close</button>
   </div>
 
   <script>
@@ -203,18 +278,34 @@
 
     // Add fade-in/out modal logic
     document.getElementById('aboutBtn').addEventListener('click', () => {
-      const modal = document.getElementById('aboutModal');
-      modal.classList.remove('hide');
-      modal.style.display = 'block';
-      requestAnimationFrame(() => modal.classList.add('show'));
+      const ABTmodal = document.getElementById('aboutModal');
+      ABTmodal.classList.remove('hide');
+      ABTmodal.style.display = 'block';
+      requestAnimationFrame(() => ABTmodal.classList.add('show'));
     });
 
     document.getElementById('closeAbout').addEventListener('click', () => {
-      const modal = document.getElementById('aboutModal');
-      modal.classList.remove('show');
-      modal.classList.add('hide');
+      const ABTmodal = document.getElementById('aboutModal');
+      ABTmodal.classList.remove('show');
+      ABTmodal.classList.add('hide');
       setTimeout(() => {
-        modal.style.display = 'none';
+        ABTmodal.style.display = 'none';
+      }, 300); // Matches transition duration
+    });
+
+    document.getElementById('infoBtn').addEventListener('click', () => {
+      const INFOmodal = document.getElementById('infoModal');
+      INFOmodal.classList.remove('hide');
+      INFOmodal.style.display = 'block';
+      requestAnimationFrame(() => INFOmodal.classList.add('show'));
+    });
+
+    document.getElementById('closeInfo').addEventListener('click', () => {
+      const INFOmodal = document.getElementById('infoModal');
+      INFOmodal.classList.remove('show');
+      INFOmodal.classList.add('hide');
+      setTimeout(() => {
+        INFOmodal.style.display = 'none';
       }, 300); // Matches transition duration
     });
 
